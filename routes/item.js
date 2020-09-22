@@ -69,7 +69,7 @@ function getNewToken(oAuth2Client, callback) {
  * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
  */
 
-var rows=[];
+var rows;
 function listMajors(auth) {
   const sheets = google.sheets({ version: 'v4', auth });
   sheets.spreadsheets.values.get({
@@ -77,13 +77,13 @@ function listMajors(auth) {
     range: ['Data!A:K']
   }, (err, res) => {
     if (err) return console.log('The API returned an error: ' + err);
+    rows=[];
     for (i = 0; i < res.data.values.length; i++) {
-      if(res.data.values[i][0]==checkID){
-        console.log("checkID:"+checkID)
-        rows=[(res.data.values[i])];
+      if (res.data.values[i][0] == checkID) {
+        rows = [(res.data.values[i])];
       }
     };
-    console.log('rows:'+rows)
+    console.log('rows1:' + rows)
   });
 }
 
@@ -122,15 +122,22 @@ function reject(auth) {
 
 
 // Load client secrets from a local file.
+var checkID = [];
+router.post('/check', function (req, res, next) {
+  checkID = ((Object.keys(req.body)));
+});
 
 router.get('/item', function (req, res, next) {
   fs.readFile('./routes/credentials.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Sheets API.
+
     authorize(JSON.parse(content), listMajors);
   });
-  setTimeout(function(){   res.render('item', { page: 'Home', menuId: 'home', rows: rows })
-  ; }, 2000);
+  setTimeout(function () {
+    res.render('item', { page: 'Home', menuId: 'home', rows: rows })
+      ;
+  }, 2000);
 
 });
 
@@ -139,7 +146,7 @@ router.get('/item', function (req, res, next) {
 // Load client secrets from a local file.
 var i;
 router.post('/approved', function (req, res, next) {
-  console.log (req.body);
+  console.log(req.body);
   i = (parseInt(Object.keys(req.body))) + 1;
   fs.readFile('./routes/credentials.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
@@ -157,10 +164,7 @@ router.post('/rejected', function (req, res, next) {
   });
 });
 
-var checkID=[];
-router.post('/check', function (req, res, next) {
-  checkID=((Object.keys(req.body)));
-});
+
 
 
 module.exports = router;
