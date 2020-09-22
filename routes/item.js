@@ -69,7 +69,7 @@ function getNewToken(oAuth2Client, callback) {
  * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
  */
 
-var rows;
+var rows=[];
 function listMajors(auth) {
   const sheets = google.sheets({ version: 'v4', auth });
   sheets.spreadsheets.values.get({
@@ -78,9 +78,8 @@ function listMajors(auth) {
   }, (err, res) => {
     if (err) return console.log('The API returned an error: ' + err);
     for (i = 0; i < res.data.values.length; i++) {
-      rows=[];
       if(res.data.values[i][0]==checkID){
-        console.log(checkID)
+        console.log("checkID:"+checkID)
         rows=[(res.data.values[i])];
       }
     };
@@ -131,7 +130,7 @@ router.get('/item', function (req, res, next) {
     authorize(JSON.parse(content), listMajors);
   });
   setTimeout(function(){   res.render('item', { page: 'Home', menuId: 'home', rows: rows })
-  ; }, 1000);
+  ; }, 2000);
 
 });
 
