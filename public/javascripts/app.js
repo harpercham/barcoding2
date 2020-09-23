@@ -1,7 +1,9 @@
 
 
-$("form").submit(function(){
-    event.preventDefault(); //prevent default action 
+$("form").submit(function(e){
+  e.stopImmediatePropagation();
+  e.stopImmediatePropagation();
+
     var form_data = ($(this).serializeArray()[0].value);
 
         //ajax post
