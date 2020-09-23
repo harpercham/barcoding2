@@ -10,7 +10,7 @@ $("form").submit(function(){
             url: '/check',
             data: form_data
           })
-        location.href="./item";
+        window.location.reload();
     });
 
 

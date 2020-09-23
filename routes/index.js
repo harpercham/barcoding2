@@ -69,15 +69,103 @@ function getNewToken(oAuth2Client, callback) {
  * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
  */
 
+var rows;
+function listMajors(auth) {
+  const sheets = google.sheets({ version: 'v4', auth });
+  sheets.spreadsheets.values.get({
+    spreadsheetId: '1UTWADG0nsKKF1R0-A_bfPdD7KlVSDyUlBhOweb7Oxy0',
+    range: ['Data!A:K']
+  }, (err, res) => {
+    if (err) return console.log('The API returned an error: ' + err);
+    rows=[['???','???','???','???','???']];
+    for (i = 0; i < res.data.values.length; i++) {
+      if (res.data.values[i][0] == checkID) {
+        rows = [(res.data.values[i])];
+      }
+    };
+    console.log('rows1:' + rows)
+  });
+}
 
+function approve(auth) {
+  const sheets = google.sheets({ version: 'v4', auth });
+  let values = [['approved']];
+  let resource = {
+    values,
+  };
+  sheets.spreadsheets.values.update({
+    spreadsheetId: '1UTWADG0nsKKF1R0-A_bfPdD7KlVSDyUlBhOweb7Oxy0',
+    range: 'Data!K'.concat(i),
+    valueInputOption: 'RAW',
+    resource,
+  }, (err, res) => {
+    if (err) return console.log('The API returned an error: ' + err);
+  });
+}
+
+
+function reject(auth) {
+  const sheets = google.sheets({ version: 'v4', auth });
+  let values = [['rejected']];
+  let resource = {
+    values,
+  };
+  sheets.spreadsheets.values.update({
+    spreadsheetId: '1UTWADG0nsKKF1R0-A_bfPdD7KlVSDyUlBhOweb7Oxy0',
+    range: 'Data!K'.concat(i),
+    valueInputOption: 'RAW',
+    resource,
+  }, (err, res) => {
+    if (err) return console.log('The API returned an error: ' + err);
+  });
+}
+
+
+// Load client secrets from a local file.
+var checkID;
+
+
+router.get('/', function (req, res, next) {
+  router.post('/check', function (req, res, next) {
+    checkID = ((Object.keys(req.body)));
+  });
+  console.log(checkID)
+  fs.readFile('./routes/credentials.json', (err, content) => {
+    if (err) return console.log('Error loading client secret file:', err);
+    // Authorize a client with credentials, then call the Google Sheets API.
+    authorize(JSON.parse(content), listMajors);
+  });
+  setTimeout(function () {
+    res.render('index', { page: 'Home', menuId: 'home', rows: rows })
+      ;
+  }, 2000);
+
+});
 
 
 
 // Load client secrets from a local file.
-
-router.get('/', function (req, res, next) {
-  res.render('index', { page: 'Home', menuId: 'home' })
+var i;
+router.post('/approved', function (req, res, next) {
+  console.log(req.body);
+  i = (parseInt(Object.keys(req.body))) + 1;
+  fs.readFile('./routes/credentials.json', (err, content) => {
+    if (err) return console.log('Error loading client secret file:', err);
+    // Authorize a client with credentials, then call the Google Sheets API.
+    authorize(JSON.parse(content), approve);
+  });
 });
+
+router.post('/rejected', function (req, res, next) {
+  i = (parseInt(Object.keys(req.body))) + 1;
+  fs.readFile('./routes/credentials.json', (err, content) => {
+    if (err) return console.log('Error loading client secret file:', err);
+    // Authorize a client with credentials, then call the Google Sheets API.
+    authorize(JSON.parse(content), reject);
+  });
+});
+
+
 
 
 module.exports = router;
