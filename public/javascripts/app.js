@@ -11,8 +11,16 @@ $("form").submit(function(e){
             type: "POST",
             url: '/check',
             data: form_data
-          })
-        window.location.reload();
-    });
+          
+          ,
+          success: function (data, textStatus, jQxhr) {
+              $('#response pre').html(data);
+              window.location = '/';
+          },
+          error: function (jqXhr, textStatus, errorThrown) {
+              console.log(errorThrown);
+          }
+        })
+        });
 
 
