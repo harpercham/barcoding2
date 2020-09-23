@@ -5,12 +5,12 @@ $("form").submit(function(e){
   e.stopImmediatePropagation();
 
     var form_data = ($(this).serializeArray()[0].value);
-  alert(form_data)
         //ajax post
         $.ajax({
             type: "POST",
             url: '/check',
-            data: form_data
+            data: {form_data
+            }
           
           ,
           success: function (data, textStatus, jQxhr) {
