@@ -123,12 +123,13 @@ function reject(auth) {
 
 // Load client secrets from a local file.
 var checkID;
-
+router.post('/check', function (req, res, next) {
+  checkID = ((Object.keys(req.body)));
+  res.redirect('/');
+});
 
 router.get('/', function (req, res, next) {
-  router.post('/check', function (req, res, next) {
-    checkID = ((Object.keys(req.body)));
-  });
+ 
   console.log(checkID)
   fs.readFile('./routes/credentials.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
